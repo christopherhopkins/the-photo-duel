@@ -1,0 +1,875 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The Photo Duel — Judge's Ballot</title>
+<meta property="og:title" content="The Photo Duel — Be the Judge">
+<meta property="og:description" content="Two photographers. Five frames. One day in Vermont. Score every shot and crown the champion.">
+<meta name="description" content="Two photographers. Five frames. Score every shot and crown the champion.">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Ccircle cx='16' cy='16' r='12' fill='none' stroke='%23E4451F' stroke-width='4'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@400;500;600;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --paper:#F2F1EC;
+    --paper-dim:#E9E7DF;
+    --ink:#1A1A18;
+    --charcoal:#2B2B28;
+    --grease:#E4451F;
+    --muted:#6B6B62;
+    --line:#CFCDC4;
+    --hair:#E0DED6;
+    --disp:'Bebas Neue','Arial Narrow',Impact,sans-serif;
+    --mono:'Space Mono',ui-monospace,'Courier New',monospace;
+    --body:'Inter',system-ui,-apple-system,sans-serif;
+  }
+  *{box-sizing:border-box;margin:0;padding:0;}
+  html{scroll-behavior:smooth;}
+  @media (prefers-reduced-motion:reduce){
+    html{scroll-behavior:auto;}
+    *,*::before,*::after{transition:none!important;animation:none!important;}
+  }
+  body{font-family:var(--body);color:var(--ink);background:#34332E;line-height:1.5;-webkit-font-smoothing:antialiased;}
+  button{font:inherit;color:inherit;background:none;border:0;cursor:pointer;}
+  button:focus-visible,input:focus-visible,textarea:focus-visible,a:focus-visible{outline:2.5px solid var(--grease);outline-offset:2px;}
+  img{display:block;max-width:100%;}
+
+  .lighttable{padding:0 12px 48px;display:flex;justify-content:center;}
+  .sheet{width:860px;max-width:100%;background:var(--paper);box-shadow:0 16px 50px rgba(0,0,0,.45);}
+  .rebate{height:16px;background-color:var(--charcoal);
+    background-image:repeating-linear-gradient(90deg,transparent 0 9px,var(--paper) 9px 17px,transparent 17px 26px);}
+  .pad{padding:30px 48px 48px;}
+  @media (max-width:640px){.pad{padding:22px 18px 36px;}}
+
+  /* ---------- sticky progress ---------- */
+  .topbar{position:sticky;top:0;z-index:40;background:var(--paper);
+    border-bottom:1.5px solid var(--ink);padding:9px 48px;
+    display:flex;align-items:center;gap:14px;}
+  @media (max-width:640px){.topbar{padding:9px 18px;}}
+  .topbar .tb-title{font-family:var(--disp);font-size:19px;letter-spacing:.03em;white-space:nowrap;}
+  .topbar .tb-title span{color:var(--grease);}
+  .tb-track{flex:1;height:6px;background:var(--hair);position:relative;}
+  .tb-fill{position:absolute;inset:0 auto 0 0;width:0%;background:var(--grease);transition:width .25s;}
+  .tb-count{font-family:var(--mono);font-size:10.5px;letter-spacing:.1em;color:var(--muted);white-space:nowrap;}
+  .tb-count b{color:var(--ink);}
+
+  /* ---------- masthead ---------- */
+  header.mast{position:relative;padding:26px 0 18px;border-bottom:2px solid var(--ink);}
+  .kicker{font-family:var(--mono);font-size:10px;letter-spacing:.28em;text-transform:uppercase;color:var(--muted);margin-bottom:10px;}
+  .title{font-family:var(--disp);font-weight:400;font-size:66px;line-height:.86;letter-spacing:.01em;}
+  .title .amp{color:var(--grease);}
+  @media (max-width:640px){.title{font-size:48px;}}
+  .edition{font-family:var(--mono);font-size:11px;letter-spacing:.12em;text-transform:uppercase;margin-top:8px;}
+  .intro{margin-top:16px;font-size:13.5px;max-width:56ch;line-height:1.6;}
+  .intro b{font-weight:600;}
+
+  /* ---------- how to judge ---------- */
+  .sec{margin-top:30px;}
+  .eyebrow{font-family:var(--mono);font-size:10px;letter-spacing:.26em;text-transform:uppercase;color:var(--grease);margin-bottom:4px;}
+  .sec-h{font-family:var(--disp);font-size:28px;font-weight:400;letter-spacing:.02em;line-height:1;margin-bottom:14px;}
+  .marks{border:1.5px solid var(--ink);padding:16px 18px;background:rgba(0,0,0,.012);}
+  .marks .lead{font-size:12.5px;margin-bottom:12px;line-height:1.5;}
+  .marklist{display:grid;grid-template-columns:repeat(5,1fr);gap:0;}
+  .mk{padding:0 12px;border-left:1px solid var(--line);}
+  .mk:first-child{border-left:0;padding-left:0;}
+  .mk .mn{font-family:var(--mono);font-weight:700;font-size:14px;color:var(--grease);}
+  .mk .ml{font-family:var(--mono);font-size:9.5px;letter-spacing:.08em;text-transform:uppercase;margin:4px 0 3px;line-height:1.3;}
+  .mk .md{font-size:10px;color:var(--muted);line-height:1.35;}
+  @media (max-width:640px){
+    .marklist{grid-template-columns:1fr 1fr;gap:10px 14px;}
+    .mk{border-left:0;padding:0;}
+  }
+
+  /* ---------- frames ---------- */
+  .frame-card{border:1.5px solid var(--ink);margin-top:22px;background:var(--paper);}
+  .fc-head{display:flex;justify-content:space-between;align-items:baseline;gap:10px;flex-wrap:wrap;
+    font-family:var(--mono);font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;
+    color:var(--muted);border-bottom:1px solid var(--hair);padding:12px 18px 10px;}
+  .fc-head .fno{color:var(--grease);}
+  .fc-body{padding:14px 18px 18px;}
+  .fc-place{font-family:var(--disp);font-size:26px;letter-spacing:.02em;line-height:.95;}
+  .fc-place .city{font-family:var(--mono);font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin-left:9px;vertical-align:2px;}
+  .fc-theme{font-family:var(--mono);font-size:11px;letter-spacing:.05em;text-transform:uppercase;color:var(--grease);margin:6px 0 5px;}
+  .fc-prompt{font-size:12px;font-style:italic;color:var(--ink);line-height:1.45;margin-bottom:14px;max-width:70ch;}
+
+  .duo{display:grid;grid-template-columns:1fr 1fr;gap:18px;}
+  @media (max-width:700px){.duo{grid-template-columns:1fr;gap:24px;}}
+
+  .shot{position:relative;border:1.5px solid var(--ink);background:var(--charcoal);cursor:zoom-in;padding:0;width:100%;display:block;}
+  .shot img{width:100%;aspect-ratio:3/2;object-fit:contain;}
+  .shot .tag{position:absolute;top:10px;left:10px;width:30px;height:30px;border-radius:50%;
+    border:2px solid var(--grease);background:var(--paper);color:var(--grease);
+    font-family:var(--disp);font-size:19px;display:grid;place-items:center;z-index:2;}
+  .shot .zoom{position:absolute;right:10px;bottom:8px;font-family:var(--mono);font-size:9px;
+    letter-spacing:.12em;text-transform:uppercase;color:var(--paper);opacity:.75;z-index:2;}
+  .shot.noimg img{display:none;}
+  .shot.noimg::after{content:attr(data-missing);display:grid;place-items:center;aspect-ratio:3/2;
+    font-family:var(--mono);font-size:11px;letter-spacing:.06em;color:var(--paper);opacity:.7;
+    background:repeating-linear-gradient(45deg,transparent 0 12px,rgba(255,255,255,.05) 12px 24px);
+    padding:12px;text-align:center;cursor:default;}
+
+  .panel{border:1px solid var(--line);margin-top:12px;}
+  .panel-h{display:flex;justify-content:space-between;align-items:baseline;
+    font-family:var(--mono);font-size:10px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;
+    padding:9px 12px;border-bottom:1px solid var(--hair);background:rgba(0,0,0,.02);}
+  .ptotal{font-size:11px;color:var(--muted);}
+  .ptotal b{color:var(--grease);font-size:13px;}
+  .mrow{display:grid;grid-template-columns:96px 1fr;gap:10px;align-items:center;
+    padding:7px 12px;border-top:1px solid var(--hair);}
+  .mrow:first-of-type{border-top:0;}
+  .mrow .lbl{font-family:var(--mono);font-size:10px;letter-spacing:.06em;text-transform:uppercase;line-height:1.3;}
+  .seg{display:flex;gap:5px;}
+  .seg .s{flex:1;min-width:0;height:38px;border:1.4px solid var(--line);
+    font-family:var(--mono);font-size:13px;color:var(--muted);background:var(--paper);
+    transition:background .12s,color .12s,border-color .12s;}
+  .seg .s:hover{border-color:var(--ink);color:var(--ink);}
+  .seg .s.on{background:var(--ink);border-color:var(--ink);color:var(--paper);font-weight:700;}
+
+  .roundline{display:flex;align-items:center;gap:12px;margin-top:14px;padding-top:12px;
+    border-top:1px solid var(--hair);font-family:var(--mono);font-size:10px;
+    letter-spacing:.12em;text-transform:uppercase;color:var(--muted);flex-wrap:wrap;}
+  .ring{display:inline-grid;place-items:center;width:30px;height:30px;border-radius:50%;
+    border:2px solid var(--line);color:var(--muted);font-family:var(--disp);font-size:19px;
+    transition:border-color .15s,color .15s,transform .15s;}
+  .ring.won{border-color:var(--grease);color:var(--grease);transform:rotate(-6deg);}
+  .roundline .verdict-word{color:var(--ink);font-weight:700;}
+
+  /* ---------- best in show ---------- */
+  .bs-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:10px;margin-top:6px;}
+  @media (max-width:700px){.bs-grid{grid-template-columns:repeat(3,1fr);}}
+  @media (max-width:440px){.bs-grid{grid-template-columns:repeat(2,1fr);}}
+  .bs{border:1.5px solid var(--line);padding:0 0 6px;background:var(--paper);transition:border-color .12s;}
+  .bs img{width:100%;aspect-ratio:1/1;object-fit:cover;background:var(--charcoal);}
+  .bs .bsl{display:block;font-family:var(--mono);font-size:10px;letter-spacing:.1em;
+    text-transform:uppercase;color:var(--muted);padding-top:6px;text-align:center;}
+  .bs:hover{border-color:var(--ink);}
+  .bs.picked{border-color:var(--grease);border-width:2.5px;}
+  .bs.picked .bsl{color:var(--grease);font-weight:700;}
+  .bs.noimg img{display:none;}
+  .bs.noimg::before{content:"—";display:grid;place-items:center;aspect-ratio:1/1;
+    background:var(--charcoal);color:var(--paper);opacity:.5;font-family:var(--mono);}
+  .bs-hint{font-size:11px;color:var(--muted);margin-top:8px;}
+
+  /* ---------- verdict ---------- */
+  .verdict{border:2px solid var(--ink);padding:20px 22px;margin-top:6px;}
+  .vrow{display:grid;grid-template-columns:1fr 1fr;gap:24px;margin-bottom:14px;}
+  @media (max-width:640px){.vrow{grid-template-columns:1fr;gap:14px;}}
+  .tally .tl{font-family:var(--mono);font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin-bottom:7px;}
+  .pips{display:flex;gap:6px;}
+  .pip{width:24px;height:24px;border:1.4px solid var(--ink);font-family:var(--mono);font-size:9px;
+    color:var(--muted);display:grid;place-items:center;}
+  .pip.won{background:var(--grease);border-color:var(--grease);color:var(--paper);font-weight:700;}
+  .pts{font-family:var(--mono);font-size:12px;letter-spacing:.06em;margin-bottom:12px;
+    border-top:1px solid var(--hair);padding-top:12px;}
+  .pts b{color:var(--grease);}
+  .champline{font-family:var(--disp);font-size:30px;letter-spacing:.02em;line-height:1;}
+  .champline .who{color:var(--grease);}
+  .champ-how{font-family:var(--mono);font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin-top:6px;}
+
+  /* ---------- submit ---------- */
+  .submit-card{border:1.5px solid var(--ink);padding:20px 22px;margin-top:22px;}
+  .fld{margin-bottom:14px;}
+  .fld label{display:block;font-family:var(--mono);font-size:10px;letter-spacing:.14em;
+    text-transform:uppercase;color:var(--muted);margin-bottom:6px;}
+  .fld input,.fld textarea{width:100%;border:1.4px solid var(--line);background:#FBFAF7;
+    padding:10px 12px;font-family:var(--body);font-size:14px;color:var(--ink);border-radius:0;}
+  .fld input:hover,.fld textarea:hover{border-color:var(--ink);}
+  .fld textarea{min-height:70px;resize:vertical;}
+  .missing{font-family:var(--mono);font-size:10.5px;letter-spacing:.04em;color:var(--muted);
+    line-height:1.9;margin-bottom:14px;border:1px dashed var(--line);padding:10px 14px;}
+  .missing a{color:var(--grease);text-decoration:none;font-weight:700;}
+  .missing a:hover{text-decoration:underline;}
+  .missing.ok{border-color:var(--grease);color:var(--ink);}
+  .bigbtn{display:block;width:100%;background:var(--ink);color:var(--paper);
+    font-family:var(--disp);font-size:24px;letter-spacing:.05em;padding:14px;
+    transition:background .15s,opacity .15s;}
+  .bigbtn:hover{background:var(--grease);}
+  .bigbtn[disabled]{opacity:.35;cursor:not-allowed;}
+  .bigbtn[disabled]:hover{background:var(--ink);}
+  .sub-status{font-family:var(--mono);font-size:11px;letter-spacing:.06em;color:var(--muted);
+    text-align:center;margin-top:10px;min-height:1.2em;}
+  .sub-status.err{color:var(--grease);}
+
+  .fallback{border:1px dashed var(--ink);padding:14px 16px;margin-top:14px;}
+  .fallback p{font-size:12px;margin-bottom:10px;line-height:1.5;}
+  .fb-row{display:flex;gap:10px;flex-wrap:wrap;}
+  .smallbtn{border:1.5px solid var(--ink);padding:9px 16px;font-family:var(--mono);
+    font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;
+    background:var(--paper);text-decoration:none;color:var(--ink);display:inline-block;}
+  .smallbtn:hover{background:var(--ink);color:var(--paper);}
+
+  /* success */
+  .done{text-align:center;padding:10px 0 6px;}
+  .stamp{width:150px;height:150px;margin:0 auto 6px;transform:rotate(-7deg);}
+  .done h3{font-family:var(--disp);font-size:32px;letter-spacing:.02em;}
+  .done p{font-size:12.5px;color:var(--muted);max-width:44ch;margin:8px auto 14px;}
+  .done pre{text-align:left;font-family:var(--mono);font-size:10.5px;line-height:1.7;
+    border:1px solid var(--line);padding:14px 16px;overflow-x:auto;background:#FBFAF7;
+    white-space:pre-wrap;word-break:break-word;margin-bottom:14px;}
+
+  footer.pagefoot{margin-top:26px;padding-top:12px;border-top:1px solid var(--hair);
+    font-family:var(--mono);font-size:9.5px;letter-spacing:.06em;color:var(--muted);
+    text-align:center;line-height:1.6;}
+  footer.pagefoot .a{color:var(--grease);}
+
+  /* ---------- lightbox ---------- */
+  .lb{position:fixed;inset:0;z-index:100;background:rgba(16,16,14,.96);
+    display:flex;flex-direction:column;}
+  .lb[hidden]{display:none;}
+  .lb-top{display:flex;align-items:center;justify-content:space-between;gap:10px;
+    padding:12px 16px;color:var(--paper);}
+  .lb-info{font-family:var(--mono);font-size:10.5px;letter-spacing:.1em;text-transform:uppercase;opacity:.85;}
+  .lb-close{color:var(--paper);font-family:var(--mono);font-size:22px;line-height:1;padding:4px 10px;}
+  .lb-stage{flex:1;display:grid;place-items:center;padding:0 12px;min-height:0;cursor:pointer;}
+  .lb-stage img{max-width:100%;max-height:100%;object-fit:contain;}
+  .lb-bottom{display:flex;align-items:center;justify-content:center;gap:10px;padding:14px 16px 18px;flex-wrap:wrap;}
+  .lb-ab{display:flex;border:1.5px solid var(--paper);}
+  .lb-ab button{width:64px;padding:9px 0;font-family:var(--disp);font-size:20px;color:var(--paper);}
+  .lb-ab button.on{background:var(--grease);}
+  .lb-nav{color:var(--paper);font-family:var(--mono);font-size:11px;letter-spacing:.1em;
+    text-transform:uppercase;padding:10px 14px;border:1px solid rgba(255,255,255,.35);}
+  .lb-nav:hover{border-color:var(--paper);}
+  .lb-hint{width:100%;text-align:center;font-family:var(--mono);font-size:9.5px;
+    letter-spacing:.14em;text-transform:uppercase;color:rgba(255,255,255,.45);}
+</style>
+</head>
+<body>
+
+<div class="lighttable">
+  <div class="sheet">
+    <div class="rebate"></div>
+
+    <div class="topbar" aria-hidden="true">
+      <div class="tb-title">The <span>Duel</span></div>
+      <div class="tb-track"><div class="tb-fill" id="tbFill"></div></div>
+      <div class="tb-count" id="tbCount"><b>0</b>/50 marks</div>
+    </div>
+
+    <div class="pad">
+
+      <header class="mast">
+        <div class="kicker">You have been summoned to judge</div>
+        <h1 class="title" id="hTitle">The Photo <span class="amp">Duel</span></h1>
+        <div class="edition" id="hSub">—</div>
+        <p class="intro">Two photographers spent one day shooting five themed rounds, side by side, same cameras, same clock. <b>You don't know whose photo is whose</b> — just Photo A vs Photo B. Score every image on the five marks, and the site tallies your verdict. Takes about five minutes.</p>
+      </header>
+
+      <section class="sec" aria-labelledby="marksH">
+        <div class="eyebrow">how to score</div>
+        <h2 class="sec-h" id="marksH">The Five Marks — 1 (rough) to 5 (flawless)</h2>
+        <div class="marks">
+          <p class="lead">Tap a photo to view it full-screen and flip between A and B. Then give <b>each photo 1–5 on each mark</b>. Go with your gut — the X-Factor is allowed to overrule everything.</p>
+          <div class="marklist" id="markList"></div>
+        </div>
+      </section>
+
+      <section class="sec">
+        <div class="eyebrow">the five frames</div>
+        <h2 class="sec-h">Round by Round</h2>
+        <div id="frames"></div>
+      </section>
+
+      <section class="sec" aria-labelledby="bsH">
+        <div class="eyebrow">one more thing</div>
+        <h2 class="sec-h" id="bsH">Best in Show</h2>
+        <div class="bs-grid" id="bsGrid"></div>
+        <p class="bs-hint">Optional — your single favorite shot of the day. It also breaks a dead heat. Tap again to unpick.</p>
+      </section>
+
+      <section class="sec" aria-labelledby="vH">
+        <div class="eyebrow">your tally</div>
+        <h2 class="sec-h" id="vH">The Verdict</h2>
+        <div class="verdict">
+          <div class="vrow">
+            <div class="tally">
+              <div class="tl">Frames won — A</div>
+              <div class="pips" id="pipsA"></div>
+            </div>
+            <div class="tally">
+              <div class="tl">Frames won — B</div>
+              <div class="pips" id="pipsB"></div>
+            </div>
+          </div>
+          <div class="pts" id="ptsLine">Points — A 0 · B 0</div>
+          <div class="champline" id="champLine">Champion: <span class="who">—</span></div>
+          <div class="champ-how" id="champHow">score all five frames to crown one</div>
+        </div>
+      </section>
+
+      <section class="sec" aria-labelledby="sH">
+        <div class="eyebrow">sign it</div>
+        <h2 class="sec-h" id="sH">File Your Verdict</h2>
+        <div class="submit-card" id="submitCard">
+          <div class="missing" id="missingBox"></div>
+          <div class="fld">
+            <label for="judgeName">Judge's name (required)</label>
+            <input id="judgeName" type="text" autocomplete="name" placeholder="e.g. Aunt Sarah" maxlength="60">
+          </div>
+          <div class="fld">
+            <label for="judgeNote">A note for the duelists (optional)</label>
+            <textarea id="judgeNote" maxlength="500" placeholder="Trash talk, praise, appeals for a recount…"></textarea>
+          </div>
+          <button class="bigbtn" id="sendBtn" disabled>File Verdict</button>
+          <div class="sub-status" id="subStatus"></div>
+          <div class="fallback" id="fallbackBox" hidden>
+            <p id="fallbackMsg">Couldn't reach the scorekeeper — send your verdict the old-fashioned way:</p>
+            <div class="fb-row">
+              <button class="smallbtn" id="copyBtn">Copy verdict</button>
+              <a class="smallbtn" id="mailBtn" href="#">Email it</a>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <footer class="pagefoot" id="pageFoot">
+        five frames <span class="a">·</span> one champion <span class="a">·</span> thanks for judging
+      </footer>
+
+    </div>
+    <div class="rebate"></div>
+  </div>
+</div>
+
+<!-- lightbox -->
+<div class="lb" id="lb" hidden role="dialog" aria-modal="true" aria-label="Photo viewer">
+  <div class="lb-top">
+    <div class="lb-info" id="lbInfo"></div>
+    <button class="lb-close" id="lbClose" aria-label="Close viewer">✕</button>
+  </div>
+  <div class="lb-stage" id="lbStage" title="Tap to flip A / B">
+    <img id="lbImg" src="" alt="">
+  </div>
+  <div class="lb-bottom">
+    <button class="lb-nav" id="lbPrev">‹ Prev frame</button>
+    <div class="lb-ab">
+      <button id="lbA" aria-label="Show Photo A">A</button>
+      <button id="lbB" aria-label="Show Photo B">B</button>
+    </div>
+    <button class="lb-nav" id="lbNext">Next frame ›</button>
+    <div class="lb-hint">tap the photo (or press A / B) to flip · esc to close</div>
+  </div>
+</div>
+
+<script src="config.js"></script>
+<script id="app">
+(function(){
+"use strict";
+
+/* ------------ config ------------ */
+var DEFAULTS = {
+  eventTitle:"The Photo Duel", eventSubtitle:"", fallbackEmail:"",
+  web3formsKey:"", formspreeId:"", frames:[]
+};
+var CFG = Object.assign({}, DEFAULTS, window.DUEL_CONFIG || {});
+var FRAMES = CFG.frames || [];
+var N = FRAMES.length;
+
+var MARKS = [
+  {id:"theme", label:"Theme",       hint:"Did it answer the prompt?"},
+  {id:"comp",  label:"Composition", hint:"Framing, balance, the eye's path."},
+  {id:"tech",  label:"Technical",   hint:"Focus, exposure, clean execution."},
+  {id:"creat", label:"Creativity",  hint:"A fresh or surprising take."},
+  {id:"x",     label:"X-Factor",    hint:"The \u201cdamn, nice shot.\u201d"}
+];
+var TOTAL_MARKS = N * 2 * MARKS.length;
+
+/* ------------ state ------------ */
+var STORE_KEY = "photoDuelBallot_v1";
+var state = { scores:{}, best:null, name:"", note:"", submitted:false };
+
+function loadState(){
+  try{
+    var raw = localStorage.getItem(STORE_KEY);
+    if(raw){ var s = JSON.parse(raw); if(s && typeof s === "object") Object.assign(state, s); }
+  }catch(e){}
+}
+function saveState(){
+  try{ localStorage.setItem(STORE_KEY, JSON.stringify(state)); }catch(e){}
+}
+function clearState(){
+  try{ localStorage.removeItem(STORE_KEY); }catch(e){}
+}
+
+function pk(i, side){ return "f" + (i+1) + side; }
+function photoLabel(i, side){ return "F" + (i+1) + " \u00b7 " + side.toUpperCase(); }
+
+/* ------------ helpers ------------ */
+function $(id){ return document.getElementById(id); }
+function esc(s){
+  return String(s).replace(/[&<>"']/g, function(c){
+    return {"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;","'":"&#39;"}[c];
+  });
+}
+function totalFor(key){
+  var s = state.scores[key] || {}, t = 0, c = 0;
+  MARKS.forEach(function(m){ if(s[m.id]){ t += s[m.id]; c++; } });
+  return { t:t, c:c, complete: c === MARKS.length };
+}
+function marksDone(){
+  var c = 0;
+  for(var i=0;i<N;i++){ c += totalFor(pk(i,"a")).c + totalFor(pk(i,"b")).c; }
+  return c;
+}
+
+/* ------------ verdict math ------------ */
+function computeVerdict(){
+  var fa=0, fb=0, ties=0, decided=0, pa=0, pb=0, lines=[];
+  for(var i=0;i<N;i++){
+    var A = totalFor(pk(i,"a")), B = totalFor(pk(i,"b"));
+    pa += A.t; pb += B.t;
+    var w = null;
+    if(A.complete && B.complete){
+      decided++;
+      if(A.t > B.t){ fa++; w="A"; }
+      else if(B.t > A.t){ fb++; w="B"; }
+      else { ties++; w="TIE"; }
+    }
+    lines.push({ i:i, a:A, b:B, w:w });
+  }
+  var champ = null, how = "";
+  if(decided === N && N > 0){
+    if(fa !== fb){ champ = fa > fb ? "A" : "B"; how = "won on frames"; }
+    else if(pa !== pb){ champ = pa > pb ? "A" : "B"; how = "frames tied \u2014 won on points"; }
+    else if(state.best){ champ = state.best.slice(-1).toUpperCase(); how = "dead heat \u2014 decided by Best in Show"; }
+    else { how = "dead heat \u2014 pick a Best in Show above to break it"; }
+  }
+  return { fa:fa, fb:fb, ties:ties, decided:decided, pa:pa, pb:pb, champ:champ, how:how, lines:lines };
+}
+
+/* ------------ render: static ------------ */
+function renderChrome(){
+  $("hTitle").innerHTML = esc(CFG.eventTitle).replace(/\s(\S+)$/, ' <span class="amp">$1</span>');
+  $("hSub").textContent = CFG.eventSubtitle ? "\u2014 " + CFG.eventSubtitle + " \u2014" : "";
+  document.title = CFG.eventTitle + " \u2014 Judge's Ballot";
+
+  $("markList").innerHTML = MARKS.map(function(m, ix){
+    return '<div class="mk"><div class="mn">' + (ix+1) + '</div><div class="ml">' + esc(m.label) +
+           '</div><div class="md">' + esc(m.hint) + '</div></div>';
+  }).join("");
+}
+
+function segHTML(key, markId){
+  var h = "";
+  for(var v=1; v<=5; v++){
+    h += '<button type="button" class="s" data-photo="' + key + '" data-mark="' + markId +
+         '" data-v="' + v + '" aria-label="Score ' + v + '">' + v + "</button>";
+  }
+  return h;
+}
+
+function panelHTML(i, side){
+  var key = pk(i, side);
+  var rows = MARKS.map(function(m){
+    return '<div class="mrow"><div class="lbl">' + esc(m.label) + '</div>' +
+           '<div class="seg" role="group" aria-label="' + esc(m.label) + ' \u2014 Photo ' + side.toUpperCase() +
+           ', Frame ' + (i+1) + '">' + segHTML(key, m.id) + "</div></div>";
+  }).join("");
+  return '<div class="panel"><div class="panel-h"><span>Photo ' + side.toUpperCase() +
+         '</span><span class="ptotal" id="tot-' + key + '">\u2014 / 25</span></div>' + rows + "</div>";
+}
+
+function shotHTML(i, side, src){
+  var key = pk(i, side);
+  return '<button type="button" class="shot" id="shot-' + key + '" data-frame="' + i + '" data-side="' + side +
+         '" data-missing="waiting on ' + esc(src) + '" aria-label="Enlarge Photo ' + side.toUpperCase() + ', Frame ' + (i+1) + '">' +
+         '<span class="tag">' + side.toUpperCase() + '</span>' +
+         '<img src="' + esc(src) + '" alt="Frame ' + (i+1) + ' \u2014 Photo ' + side.toUpperCase() + '">' +
+         '<span class="zoom">tap to enlarge</span></button>';
+}
+
+function renderFrames(){
+  $("frames").innerHTML = FRAMES.map(function(f, i){
+    var num = String(i+1).padStart ? String(i+1).padStart(2,"0") : ("0"+(i+1)).slice(-2);
+    return '<section class="frame-card" id="frame-' + (i+1) + '">' +
+      '<div class="fc-head"><span class="fno">Frame ' + num + '</span><span>' + esc(f.time || "") + '</span></div>' +
+      '<div class="fc-body">' +
+        '<div class="fc-place">' + esc(f.place) + '<span class="city">' + esc(f.city || "") + '</span></div>' +
+        '<div class="fc-theme">' + esc(f.theme) + '</div>' +
+        '<p class="fc-prompt">' + esc(f.prompt || "") + '</p>' +
+        '<div class="duo">' +
+          '<div class="half">' + shotHTML(i,"a",f.a) + panelHTML(i,"a") + '</div>' +
+          '<div class="half">' + shotHTML(i,"b",f.b) + panelHTML(i,"b") + '</div>' +
+        '</div>' +
+        '<div class="roundline" id="win-' + (i+1) + '"></div>' +
+      '</div></section>';
+  }).join("");
+
+  /* image error handling */
+  var imgs = document.querySelectorAll(".shot img");
+  Array.prototype.forEach.call(imgs, function(img){
+    img.addEventListener("error", function(){ img.closest(".shot").classList.add("noimg"); });
+  });
+}
+
+function renderBestGrid(){
+  var cells = [];
+  FRAMES.forEach(function(f, i){
+    ["a","b"].forEach(function(side){
+      var key = pk(i, side);
+      cells.push('<button type="button" class="bs" data-pick="' + key + '" aria-label="Best in Show: ' + photoLabel(i, side) + '">' +
+        '<img src="' + esc(f[side]) + '" alt="" loading="lazy">' +
+        '<span class="bsl">' + photoLabel(i, side) + "</span></button>");
+    });
+  });
+  $("bsGrid").innerHTML = cells.join("");
+  var imgs = document.querySelectorAll(".bs img");
+  Array.prototype.forEach.call(imgs, function(img){
+    img.addEventListener("error", function(){ img.closest(".bs").classList.add("noimg"); });
+  });
+}
+
+function renderPips(){
+  var mk = function(){ var h=""; for(var i=1;i<=N;i++){ h += '<span class="pip">' + i + "</span>"; } return h; };
+  $("pipsA").innerHTML = mk();
+  $("pipsB").innerHTML = mk();
+}
+
+/* ------------ render: live ------------ */
+function refreshPhoto(key){
+  var info = totalFor(key);
+  var el = $("tot-" + key);
+  if(el) el.innerHTML = (info.c ? "<b>" + info.t + "</b>" : "\u2014") + " / 25";
+  var s = state.scores[key] || {};
+  MARKS.forEach(function(m){
+    var btns = document.querySelectorAll('.s[data-photo="' + key + '"][data-mark="' + m.id + '"]');
+    Array.prototype.forEach.call(btns, function(b){
+      b.classList.toggle("on", s[m.id] === +b.dataset.v);
+    });
+  });
+}
+
+function refreshRound(i){
+  var A = totalFor(pk(i,"a")), B = totalFor(pk(i,"b"));
+  var el = $("win-" + (i+1));
+  if(!el) return;
+  var html;
+  if(A.complete && B.complete){
+    if(A.t === B.t){
+      html = 'Round \u2014 <span class="verdict-word">tied at ' + A.t + "</span> \u00b7 counts to neither";
+    } else {
+      var w = A.t > B.t ? "A" : "B";
+      html = 'Round to <span class="ring won">' + w + "</span>" +
+             '<span class="verdict-word">' + Math.max(A.t,B.t) + " \u2013 " + Math.min(A.t,B.t) + "</span>";
+    }
+  } else {
+    html = 'Round to <span class="ring">?</span> score both photos to call it';
+  }
+  el.innerHTML = html;
+}
+
+function refreshBest(){
+  var btns = document.querySelectorAll(".bs");
+  Array.prototype.forEach.call(btns, function(b){
+    b.classList.toggle("picked", state.best === b.dataset.pick);
+  });
+}
+
+function refreshVerdict(){
+  var v = computeVerdict();
+  var pipsA = document.querySelectorAll("#pipsA .pip");
+  var pipsB = document.querySelectorAll("#pipsB .pip");
+  Array.prototype.forEach.call(pipsA, function(p, ix){ p.classList.toggle("won", ix < v.fa); });
+  Array.prototype.forEach.call(pipsB, function(p, ix){ p.classList.toggle("won", ix < v.fb); });
+  $("ptsLine").innerHTML = "Points \u2014 A <b>" + v.pa + "</b> \u00b7 B <b>" + v.pb + "</b>" +
+    (v.ties ? " \u00b7 " + v.ties + " tied round" + (v.ties>1?"s":"") : "");
+  $("champLine").innerHTML = 'Champion: <span class="who">' + (v.champ ? "Photo " + v.champ : "\u2014") + "</span>";
+  $("champHow").textContent = v.champ ? v.how :
+    (v.decided === N && N > 0 ? v.how : "score all five frames to crown one");
+}
+
+function refreshProgress(){
+  var done = marksDone();
+  $("tbFill").style.width = (TOTAL_MARKS ? (done / TOTAL_MARKS * 100) : 0) + "%";
+  $("tbCount").innerHTML = "<b>" + done + "</b>/" + TOTAL_MARKS + " marks";
+}
+
+function refreshMissing(){
+  var items = [];
+  for(var i=0;i<N;i++){
+    ["a","b"].forEach(function(side){
+      var t = totalFor(pk(i, side));
+      if(!t.complete){
+        var left = MARKS.length - t.c;
+        items.push('<a href="#frame-' + (i+1) + '">Frame ' + (i+1) + " \u00b7 " + side.toUpperCase() +
+                   "</a> \u2014 " + left + " mark" + (left>1?"s":"") + " left");
+      }
+    });
+  }
+  var box = $("missingBox");
+  var nameOk = state.name.trim().length > 0;
+  var v = computeVerdict();
+  var deadHeatBlock = (v.decided === N && N>0 && !v.champ);
+  if(items.length){
+    box.classList.remove("ok");
+    box.innerHTML = "Still to score \u2192 " + items.join(" \u00b7 ");
+  } else if(deadHeatBlock){
+    box.classList.remove("ok");
+    box.innerHTML = 'Dead heat \u2014 <a href="#bsH">pick a Best in Show</a> to break the tie.';
+  } else {
+    box.classList.add("ok");
+    box.innerHTML = "All " + TOTAL_MARKS + " marks in. " + (nameOk ? "Ready to file." : "Add your name below and file it.");
+  }
+  $("sendBtn").disabled = !(items.length === 0 && nameOk && !deadHeatBlock && !state.submitted);
+}
+
+function refreshAll(){
+  for(var i=0;i<N;i++){
+    refreshPhoto(pk(i,"a"));
+    refreshPhoto(pk(i,"b"));
+    refreshRound(i);
+  }
+  refreshBest();
+  refreshVerdict();
+  refreshProgress();
+  refreshMissing();
+}
+
+/* ------------ verdict text ------------ */
+function buildSummary(){
+  var v = computeVerdict();
+  var L = [];
+  L.push((CFG.eventTitle || "THE PHOTO DUEL").toUpperCase() + " \u2014 VERDICT");
+  L.push("Judge: " + state.name.trim());
+  L.push("");
+  v.lines.forEach(function(x){
+    var f = FRAMES[x.i];
+    L.push("F" + (x.i+1) + " " + f.place + " \u00b7 " + f.theme);
+    L.push("   A " + x.a.t + " / B " + x.b.t + "  \u2192 " + (x.w === "TIE" ? "tied" : (x.w || "\u2014")));
+  });
+  L.push("");
+  L.push("Frames  A " + v.fa + " \u2013 " + v.fb + " B" + (v.ties ? "  (" + v.ties + " tied)" : ""));
+  L.push("Points  A " + v.pa + " \u2013 " + v.pb + " B");
+  if(state.best){
+    var bi = +state.best.slice(1, -1), bs = state.best.slice(-1).toUpperCase();
+    L.push("Best in Show: F" + bi + " \u00b7 Photo " + bs);
+  }
+  L.push("CHAMPION: " + (v.champ ? "PHOTO " + v.champ + "  (" + v.how + ")" : "\u2014"));
+  if(state.note.trim()) L.push("Note: " + state.note.trim());
+  return L.join("\n");
+}
+function buildDetail(){
+  var parts = [];
+  for(var i=0;i<N;i++){
+    var row = "F" + (i+1) + " ";
+    ["a","b"].forEach(function(side, ix){
+      var s = state.scores[pk(i, side)] || {};
+      var vals = MARKS.map(function(m){ return s[m.id] || 0; });
+      row += side.toUpperCase() + "[" + vals.join("\u00b7") + "]=" + totalFor(pk(i, side)).t + (ix ? "" : " ");
+    });
+    parts.push(row);
+  }
+  return parts.join(" | ");
+}
+
+/* ------------ submit ------------ */
+function showFallback(msg){
+  $("fallbackBox").hidden = false;
+  if(msg) $("fallbackMsg").textContent = msg;
+  var body = buildSummary() + "\n\n" + buildDetail();
+  var mail = "mailto:" + encodeURIComponent(CFG.fallbackEmail || "") +
+    "?subject=" + encodeURIComponent("Photo Duel verdict \u2014 " + state.name.trim()) +
+    "&body=" + encodeURIComponent(body);
+  $("mailBtn").href = mail;
+  if(!CFG.fallbackEmail) $("mailBtn").style.display = "none";
+}
+
+function copyText(text, btn){
+  function ok(){ if(btn){ var o = btn.textContent; btn.textContent = "Copied \u2713"; setTimeout(function(){ btn.textContent = o; }, 1600); } }
+  if(navigator.clipboard && navigator.clipboard.writeText){
+    navigator.clipboard.writeText(text).then(ok, function(){ legacy(); });
+  } else { legacy(); }
+  function legacy(){
+    var ta = document.createElement("textarea");
+    ta.value = text; ta.style.position = "fixed"; ta.style.opacity = "0";
+    document.body.appendChild(ta); ta.select();
+    try{ document.execCommand("copy"); ok(); }catch(e){}
+    document.body.removeChild(ta);
+  }
+}
+
+function payload(){
+  var v = computeVerdict();
+  var p = {
+    judge: state.name.trim(),
+    champion: v.champ ? "Photo " + v.champ : "\u2014",
+    frames: "A " + v.fa + " \u2013 " + v.fb + " B",
+    points: "A " + v.pa + " \u2013 " + v.pb + " B",
+    best_in_show: state.best ? state.best.toUpperCase() : "\u2014",
+    note: state.note.trim() || "\u2014",
+    detail: buildDetail(),
+    verdict: buildSummary()
+  };
+  computeVerdict().lines.forEach(function(x){
+    p["frame_" + (x.i+1)] = "A " + x.a.t + " / B " + x.b.t + " \u2192 " + (x.w === "TIE" ? "tied" : (x.w || "\u2014"));
+  });
+  return p;
+}
+
+function submitVerdict(){
+  var btn = $("sendBtn"), st = $("subStatus");
+  btn.disabled = true;
+  st.classList.remove("err");
+
+  var p = payload();
+  var req = null;
+
+  if(CFG.web3formsKey){
+    p.access_key = CFG.web3formsKey;
+    p.subject = "Photo Duel verdict \u2014 " + state.name.trim();
+    p.from_name = state.name.trim();
+    p.botcheck = "";
+    req = fetch("https://api.web3forms.com/submit", {
+      method:"POST",
+      headers:{ "Content-Type":"application/json", "Accept":"application/json" },
+      body: JSON.stringify(p)
+    }).then(function(r){ return r.json(); }).then(function(d){
+      if(!d.success) throw new Error(d.message || "rejected");
+    });
+  } else if(CFG.formspreeId){
+    req = fetch("https://formspree.io/f/" + CFG.formspreeId, {
+      method:"POST",
+      headers:{ "Content-Type":"application/json", "Accept":"application/json" },
+      body: JSON.stringify(p)
+    }).then(function(r){ if(!r.ok) throw new Error("HTTP " + r.status); });
+  } else {
+    st.textContent = "";
+    showFallback("No online scorekeeper is set up \u2014 copy your verdict or email it:");
+    btn.disabled = false;
+    return;
+  }
+
+  st.textContent = "Filing your verdict\u2026";
+  req.then(function(){
+    state.submitted = true; saveState();
+    showSuccess();
+  }).catch(function(){
+    st.textContent = "That didn't go through.";
+    st.classList.add("err");
+    showFallback("Couldn't reach the scorekeeper \u2014 send it the old-fashioned way:");
+    btn.disabled = false;
+  });
+}
+
+function showSuccess(){
+  var v = computeVerdict();
+  var card = $("submitCard");
+  card.innerHTML =
+    '<div class="done">' +
+      '<svg class="stamp" viewBox="0 0 160 160" fill="none" aria-hidden="true">' +
+        '<ellipse cx="80" cy="80" rx="70" ry="56" stroke="#E4451F" stroke-width="4" stroke-dasharray="3 2"/>' +
+        '<ellipse cx="80" cy="80" rx="61" ry="47" stroke="#E4451F" stroke-width="1.6"/>' +
+        '<text x="80" y="74" text-anchor="middle" font-family="Bebas Neue, sans-serif" font-size="27" fill="#E4451F">VERDICT</text>' +
+        '<text x="80" y="102" text-anchor="middle" font-family="Bebas Neue, sans-serif" font-size="27" fill="#E4451F">FILED</text>' +
+      '</svg>' +
+      '<h3>Thanks, judge.</h3>' +
+      '<p>Your scores are in' + (v.champ ? " \u2014 you called it for <b>Photo " + v.champ + "</b>." : ".") +
+      ' The duelists find out whose photos were whose when every verdict is counted.</p>' +
+      '<pre id="donePre"></pre>' +
+      '<div class="fb-row" style="justify-content:center">' +
+        '<button class="smallbtn" id="doneCopy">Copy my verdict</button>' +
+        '<button class="smallbtn" id="againBtn">Judge again on this device</button>' +
+      "</div>" +
+    "</div>";
+  $("donePre").textContent = buildSummary();
+  $("doneCopy").addEventListener("click", function(){ copyText(buildSummary() + "\n\n" + buildDetail(), $("doneCopy")); });
+  $("againBtn").addEventListener("click", function(){
+    if(confirm("Clear this ballot so someone else can judge on this device?")){
+      clearState(); location.reload();
+    }
+  });
+  card.scrollIntoView({ block:"center" });
+}
+
+/* ------------ lightbox ------------ */
+var lb = { open:false, frame:0, side:"a" };
+function lbRender(){
+  var f = FRAMES[lb.frame];
+  if(!f) return;
+  $("lbImg").src = f[lb.side];
+  $("lbImg").alt = "Frame " + (lb.frame+1) + " \u2014 Photo " + lb.side.toUpperCase();
+  $("lbInfo").textContent = "Frame " + (lb.frame+1) + " \u00b7 " + f.theme + " \u2014 Photo " + lb.side.toUpperCase();
+  $("lbA").classList.toggle("on", lb.side === "a");
+  $("lbB").classList.toggle("on", lb.side === "b");
+}
+function lbOpen(frame, side){
+  lb.open = true; lb.frame = frame; lb.side = side;
+  $("lb").hidden = false;
+  document.body.style.overflow = "hidden";
+  lbRender();
+  $("lbClose").focus();
+}
+function lbCloseFn(){
+  lb.open = false;
+  $("lb").hidden = true;
+  document.body.style.overflow = "";
+}
+function lbFlip(){ lb.side = lb.side === "a" ? "b" : "a"; lbRender(); }
+function lbStep(d){ lb.frame = (lb.frame + d + N) % N; lbRender(); }
+
+/* ------------ events ------------ */
+document.addEventListener("click", function(e){
+  var s = e.target.closest("button.s");
+  if(s){
+    var key = s.dataset.photo, mark = s.dataset.mark, v = +s.dataset.v;
+    if(!state.scores[key]) state.scores[key] = {};
+    state.scores[key][mark] = (state.scores[key][mark] === v) ? undefined : v;
+    if(state.scores[key][mark] === undefined) delete state.scores[key][mark];
+    saveState();
+    refreshPhoto(key);
+    var idx = +key.slice(1, -1) - 1;
+    refreshRound(idx);
+    refreshVerdict(); refreshProgress(); refreshMissing();
+    return;
+  }
+  var bs = e.target.closest("button.bs");
+  if(bs){
+    state.best = (state.best === bs.dataset.pick) ? null : bs.dataset.pick;
+    saveState();
+    refreshBest(); refreshVerdict(); refreshMissing();
+    return;
+  }
+  var shot = e.target.closest("button.shot");
+  if(shot && !shot.classList.contains("noimg")){
+    lbOpen(+shot.dataset.frame, shot.dataset.side);
+  }
+});
+
+$("lbClose").addEventListener("click", lbCloseFn);
+$("lbStage").addEventListener("click", lbFlip);
+$("lbA").addEventListener("click", function(){ lb.side = "a"; lbRender(); });
+$("lbB").addEventListener("click", function(){ lb.side = "b"; lbRender(); });
+$("lbPrev").addEventListener("click", function(){ lbStep(-1); });
+$("lbNext").addEventListener("click", function(){ lbStep(1); });
+$("lb").addEventListener("click", function(e){ if(e.target === $("lb")) lbCloseFn(); });
+document.addEventListener("keydown", function(e){
+  if(!lb.open) return;
+  if(e.key === "Escape") lbCloseFn();
+  else if(e.key === "ArrowLeft") lbStep(-1);
+  else if(e.key === "ArrowRight") lbStep(1);
+  else if(e.key === "a" || e.key === "A"){ lb.side = "a"; lbRender(); }
+  else if(e.key === "b" || e.key === "B"){ lb.side = "b"; lbRender(); }
+  else if(e.key === " "){ e.preventDefault(); lbFlip(); }
+});
+
+$("judgeName").addEventListener("input", function(e){ state.name = e.target.value; saveState(); refreshMissing(); });
+$("judgeNote").addEventListener("input", function(e){ state.note = e.target.value; saveState(); });
+$("sendBtn").addEventListener("click", submitVerdict);
+$("copyBtn").addEventListener("click", function(){ copyText(buildSummary() + "\n\n" + buildDetail(), $("copyBtn")); });
+
+/* ------------ boot ------------ */
+renderChrome();
+renderFrames();
+renderBestGrid();
+renderPips();
+loadState();
+$("judgeName").value = state.name || "";
+$("judgeNote").value = state.note || "";
+if(state.submitted){ showSuccess(); }
+refreshAll();
+
+})();
+</script>
+</body>
+</html>
