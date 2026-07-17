@@ -6,7 +6,7 @@
 window.DUEL_CONFIG = {
 
   eventTitle: "The Photo Duel",
-  eventSubtitle: "Quiet Edition · Vermont · July 4th Weekend",
+  eventSubtitle: "LNCHTime · Vermont · July 4th Weekend",
 
   /* ---- SCORE COLLECTION ----------------------------------
      Pick ONE (or neither — see README).
